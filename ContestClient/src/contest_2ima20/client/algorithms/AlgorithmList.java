@@ -15,7 +15,8 @@ public class AlgorithmList {
 
     public static BoundaryEmbeddingAlgorithm[] getAlgorithms() {
         return new BoundaryEmbeddingAlgorithm[]{
-            new ArbitraryAlgorithm()
+            new ArbitraryAlgorithm(),
+            new KoenAlgorithm()
         };
     }
 }
