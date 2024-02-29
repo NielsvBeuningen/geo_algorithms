@@ -26,7 +26,7 @@ public class KoenAlgorithm extends BoundaryEmbeddingAlgorithm {
     @Override
     public Output doAlgorithm(Input input) {
 
-        // creating an output
+
         int down = 0;
         int up = 0;
         int left = 0;
@@ -39,6 +39,7 @@ public class KoenAlgorithm extends BoundaryEmbeddingAlgorithm {
         int xCoordInt = 0; // HEEEEEL Lelijk
         int yCoordInt = 0;
 
+        // find the direction counts and find the min and max width and height of the sequence
         for (Direction d : input.directions){
             if (d == Direction.DOWN) {
                 down = down + 1;
@@ -72,6 +73,7 @@ public class KoenAlgorithm extends BoundaryEmbeddingAlgorithm {
         System.out.println(xMin);
         Boolean breakOut = false;
 
+        // find starting position where the entire sequence fits the grid
         for (int i = 0; i < input.width; i++ ) {
             for (int j = 0; j < input.height; j++) {
                 if (i+xMin>-1 && i+xMax<input.width && j+yMin>-1 && j+yMax<input.height) {
@@ -85,9 +87,11 @@ public class KoenAlgorithm extends BoundaryEmbeddingAlgorithm {
                 break;
             }
         }
-        // let's just go right, surely that's a good idea
+        // Start point
         GridPoint gp = new GridPoint(xStart,yStart);
         output.embedding.add(gp);
+
+        // go throught sequence
         for (Direction d : input.directions) {
             gp = new GridPoint(gp);
             if (d == Direction.DOWN) {
