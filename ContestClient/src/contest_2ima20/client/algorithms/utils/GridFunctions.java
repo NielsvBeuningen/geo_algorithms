@@ -2,74 +2,77 @@ package contest_2ima20.client.algorithms.utils;
 
 import contest_2ima20.core.boundaryembedding.GridPoint;
 import contest_2ima20.core.boundaryembedding.Direction;
-import contest_2ima20.core.boundaryembedding.Input;
-import nl.tue.geometrycore.geometry.Vector;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class GridFunctions {
     // Make FindMaxCycleSet function
-    public static List<List<Integer>> FindMaxCycleSet(List<Direction> P) {
-        List<List<Integer>> CycleSet = new ArrayList<>();
-        List<GridPoint> Coordinates = new ArrayList<>();
-        Coordinates.add(new GridPoint(0, 0));
-        int EndPreviousCycle = 0;
-        GridPoint CurrentCoordinate = new GridPoint(0, 0);
+    public static List<List<Integer>> findMaxCycleSet(List<Direction> P) {
+        List<GridPoint> coordinates = new ArrayList<>();
+        Set<List<Integer>> cycleSet = new HashSet<>(); // Use a Set to avoid duplicate cycles
+        Map<GridPoint, Integer> coordinateToIndexMap = new HashMap<>();
+
+        GridPoint currentCoordinate = new GridPoint(0, 0);
+        coordinates.add(currentCoordinate);
+        coordinateToIndexMap.put(currentCoordinate, 0);
+
         for (int i = 0; i < P.size(); i++) {
-            GridPoint NextCoordinate = new GridPoint(0, 0);
-            if (P.get(i).toVector() == Vector.down()) {
-                NextCoordinate = new GridPoint(CurrentCoordinate.getIntX(), CurrentCoordinate.getIntY() - 1);
-            } else if (P.get(i).toVector() == Vector.up()) {
-                NextCoordinate = new GridPoint(CurrentCoordinate.getIntX(), CurrentCoordinate.getIntY() + 1);
-            } else if (P.get(i).toVector() == Vector.right()) {
-                NextCoordinate = new GridPoint(CurrentCoordinate.getIntX() + 1, CurrentCoordinate.getIntY());
-            } else if (P.get(i).toVector() == Vector.left()) {
-                NextCoordinate = new GridPoint(CurrentCoordinate.getIntX() - 1, CurrentCoordinate.getIntY());
-            }
-            if (!Coordinates.contains(NextCoordinate)) {
-                Coordinates.add(NextCoordinate);
+            GridPoint nextCoordinate = getNextCoordinate(currentCoordinate, P.get(i));
+            if (coordinateToIndexMap.containsKey(nextCoordinate)) {
+                int cycleStartIndex = coordinateToIndexMap.get(nextCoordinate);
+                List<Integer> cycle = IntStream.rangeClosed(cycleStartIndex, i)
+                                                .boxed()
+                                                .collect(Collectors.toList());
+                cycleSet.add(cycle);
             } else {
-                List<Integer> cycle = new ArrayList<>();
-                cycle.add(Coordinates.indexOf(NextCoordinate));
-                cycle.add(i + 1);
-                CycleSet.add(cycle);
-                EndPreviousCycle = i + 1;
-                Coordinates.clear();
-                Coordinates.add(NextCoordinate);
+                coordinates.add(nextCoordinate);
+                coordinateToIndexMap.put(nextCoordinate, i + 1);
             }
-            CurrentCoordinate = NextCoordinate;
+            currentCoordinate = nextCoordinate;
         }
-        return CycleSet;
+        return new ArrayList<>(cycleSet); // Convert Set to List
     }
 
-    public static boolean FindSolutionOfSize(int s, List<Direction> p, List<Direction> originalP, List<List<Integer>> C, List<Direction> Solution) {
-        List<Integer> Cycle = C.get(0);
-        for (int i = 0; i < Cycle.size(); i++) {
-            Vector OriginalDirection = originalP.get(Cycle.get(i)).toVector();
-            if (p.get(i).toVector() == OriginalDirection) {
-                List<Direction> AllDirections = new ArrayList<Direction>(){{
-                    add(Direction.DOWN); 
-                    add(Direction.UP); 
-                    add(Direction.RIGHT); 
-                    add(Direction.LEFT);
-                }};
+    private static GridPoint getNextCoordinate(GridPoint currentCoordinate, Direction direction) {
+        switch (direction) {
+            case DOWN:
+                return new GridPoint(currentCoordinate.getIntX(), currentCoordinate.getIntY() - 1);
+            case UP:
+                return new GridPoint(currentCoordinate.getIntX(), currentCoordinate.getIntY() + 1);
+            case RIGHT:
+                return new GridPoint(currentCoordinate.getIntX() + 1, currentCoordinate.getIntY());
+            case LEFT:
+                return new GridPoint(currentCoordinate.getIntX() - 1, currentCoordinate.getIntY());
+            default:
+                return new GridPoint(currentCoordinate.getIntX(), currentCoordinate.getIntY());
+        }
+    }
 
-                // Add all directions except the original direction
-                for (Direction direction : AllDirections) {
-                    if (direction.toVector() != OriginalDirection) {
-                        List<Direction> p_prime = new ArrayList<>(p);
-                        
-                        p.set(i, direction);
-                        p_prime = p;
-                        List<List<Integer>> CycleSet = FindMaxCycleSet(p_prime);
-
-                        if (CycleSet.size() == 0) {
-                            Solution = p_prime;
-                            return true;
-                        } else if (CycleSet.size() <= s - 1) {
-                            if (FindSolutionOfSize(s - 1, p_prime, originalP, CycleSet, Solution)) {
+    public static boolean findSolutionOfSize(int s, List<Direction> p, List<List<Integer>> cycles, List<Direction> solution) {
+        if (cycles.isEmpty() || s == 0) {
+            solution.addAll(p); // Assuming solution is initially empty
+            return true;
+        }
+    
+        for (List<Integer> cycle : cycles) {
+            for (Integer index : cycle) {
+                Direction originalDirection = p.get(index);
+                for (Direction direction : Direction.values()) {
+                    if (direction != originalDirection) {
+                        List<Direction> pPrime = new ArrayList<>(p);
+                        pPrime.set(index, direction);
+                        List<List<Integer>> cycleSetPrime = findMaxCycleSet(pPrime);
+                        if (cycleSetPrime.size() <= s - 1) {
+                            boolean found = findSolutionOfSize(s - 1, pPrime, cycleSetPrime, solution);
+                            if (found) {
                                 return true;
                             }
                         }
@@ -80,25 +83,28 @@ public class GridFunctions {
         return false;
     }
 
-    // Make SmartBruteForce function
-    public static List<Direction> SmartBruteForce(List<Direction> P) {
-        List<List<Integer>> MaxCycleSet = FindMaxCycleSet(P);
-        int LowerBound = MaxCycleSet.size();
-        if (LowerBound == 0) {
-            return P;
+    public static List<Direction> smartBruteForce(List<Direction> p) {
+        List<List<Integer>> maxCycleSet = findMaxCycleSet(p);
+        int lowerBound = maxCycleSet.size();
+        
+        if (lowerBound == 0) {
+            return new ArrayList<>(p); // Return a copy of the original path if no cycles
         }
-        boolean FoundSolution = false;
-        List<Direction> Solution = new ArrayList<>();
+        
+        List<Direction> solution = new ArrayList<>();
 
-        for (int i = LowerBound; i < P.size(); i++) {
-            FoundSolution = FindSolutionOfSize(i, P, P, MaxCycleSet, Solution);
-            if (FoundSolution) {
-                System.out.println("Found solution");
+        System.out.println("Lower bound: " + lowerBound);
+        System.out.println("Path size: " + p.size());
+
+        for (int i = lowerBound; i <= p.size(); i++) {
+            System.out.println("Trying size " + i);
+            if (findSolutionOfSize(i, new ArrayList<>(p), maxCycleSet, solution)) {
                 System.out.println("Found solution of size " + i);
-                return Solution;
+                return solution;
             }
         }
+        
         System.out.println("No solution found");
-        return Solution;
+        return p; // Return an empty list if no solution
     }
 }

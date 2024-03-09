@@ -33,7 +33,7 @@ public class TurboDirector extends BoundaryEmbeddingAlgorithm {
         GridPoint start_gp = new GridPoint(start_x, start_y);
         
         // Use smart brute force to find the best solution
-        List<Direction> best_solution = GridFunctions.SmartBruteForce(input.directions);
+        List<Direction> best_solution = GridFunctions.smartBruteForce(input.directions);
 
         // INCLUDE STARTING POSITION MECHANICS
 
