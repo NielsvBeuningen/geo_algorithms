@@ -1,9 +1,10 @@
 package contest_2ima20.client.algorithms.utils;
 
+import contest_2ima20.core.boundaryembedding.Input;
+
 import contest_2ima20.core.boundaryembedding.GridPoint;
 import contest_2ima20.core.boundaryembedding.Direction;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,5 +107,40 @@ public class GridFunctions {
         
         System.out.println("No solution found");
         return p; // Return an empty list if no solution
+    }
+
+
+    // This function translates the entire solution to a starting position such that the solution fits
+    public static List<GridPoint> translateSolution(List<GridPoint> solution, Input input) {
+        
+        // First find the dimensions of the solution
+        int minX = 0;
+        int minY = 0;
+        int maxX = 0;
+        int maxY = 0;
+
+        for (GridPoint point : solution) {
+            if (point.getIntX() < minX) {
+                minX = point.getIntX();
+            } else if (point.getIntX() > maxX) {
+                maxX = point.getIntX();
+            }
+            if (point.getIntY() < minY) {
+                minY = point.getIntY();
+            } else if (point.getIntY() > maxY) {
+                maxY = point.getIntY();
+            }
+        }
+        int solutionWidth = maxX - minX;
+        int solutionHeight = maxY - minY;
+
+        // If solution dimensions are small enough translate each point accordingly
+        if (solutionWidth <= input.width && solutionHeight <= input.height) {
+            for (GridPoint point : solution) {
+                point.translate(-minX, -minY);
+            }
+        }
+
+        return solution;
     }
 }
