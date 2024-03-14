@@ -60,23 +60,11 @@ public class BasicAlgorithm extends BoundaryEmbeddingAlgorithm {
             GridPoint nextGp = new GridPoint(gp);
             nextGp.translate(d.toVector());
             
-            if (!isValidPlacement(gp_temp, nextGp, W, H)) {
-                // If the placement isn't valid, try the next direction
-                currentDirection = getNextDirection(currentDirection);
-                nextGp = new GridPoint(gp);
-                nextGp.translate(currentDirection.toVector());
-                
-                // If the new direction is still not valid, record a deviation and continue
-                if (!isValidPlacement(gp_temp, nextGp, W, H)) {
-                    continue; // Skip this placement
-                }
-            }
-            
             // If a valid placement is found, add to the embedding and update the current position
             gp_temp.add(nextGp);
             gp = nextGp; // Update current GridPoint
         }
-
+        
         for (GridPoint g : gp_temp) {
             output.embedding.add(g);
         }
