@@ -49,7 +49,7 @@ public class TurboDirector extends BoundaryEmbeddingAlgorithm {
         List<GridPoint> translated_solution_gp = GridFunctions.translateSolution(best_solution_gp, input);
 
         // Add the best solution to the output
-        for (GridPoint gp : best_solution_gp) {
+        for (GridPoint gp : translated_solution_gp) {
             output.embedding.add(gp);
         }
 
