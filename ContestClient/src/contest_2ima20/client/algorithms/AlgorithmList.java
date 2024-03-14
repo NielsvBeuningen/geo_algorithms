@@ -17,7 +17,7 @@ public class AlgorithmList {
         return new BoundaryEmbeddingAlgorithm[]{
             new ArbitraryAlgorithm(),
             new BasicAlgorithm(),
-            new TurboDirector()
+            new TurboDirector(),
             new KoenAlgorithm()
         };
     }
