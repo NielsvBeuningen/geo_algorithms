@@ -9,6 +9,7 @@ import contest_2ima20.core.boundaryembedding.Input;
 import contest_2ima20.core.boundaryembedding.Output;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import contest_2ima20.client.boundaryembedding.BoundaryEmbeddingAlgorithm;
@@ -35,7 +36,7 @@ public class TurboDirector extends BoundaryEmbeddingAlgorithm {
         // Use smart brute force to find the best solution
         List<Direction> best_solution = GridFunctions.smartBruteForce(input.directions);
 
-        // INCLUDE STARTING POSITION MECHANICS
+        // startpoint
 
         // Convert the best solution to a list of GridPoints
         List<GridPoint> best_solution_gp = new ArrayList<>();

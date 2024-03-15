@@ -18,6 +18,7 @@ public class AlgorithmList {
             new ArbitraryAlgorithm(),
             new BasicAlgorithm(),
             new TurboDirector(),
+            new BasicSpiralAlgorithm()
         };
     }
 }
