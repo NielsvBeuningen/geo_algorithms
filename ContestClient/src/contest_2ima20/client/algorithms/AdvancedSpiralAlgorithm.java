@@ -20,7 +20,33 @@ import java.util.List;
  *
  * @author Niels van Beuningen (n.p.g.t.v.beuningen@student.tue.nl)
  */
-public class BasicSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
+public class AdvancedSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
+
+    public int calcMaxLength(int width, int step) {
+        int length = width;
+
+        for (int i = width; i > 0; i = i - step) {
+            length = length + (2*i); 
+        }
+
+        System.out.println(length);
+
+        return length;
+    }
+
+    public int calcInwardStep(Input input) {
+        int step = 1; 
+        int x = input.width;
+
+        for (int i = 1; i < x; i++ ) {
+            System.out.println(i);
+            if (input.directions.size() >= calcMaxLength(x, i)) {
+                step = i-1;
+                break;
+            }
+        }
+        return step;
+    }
 
     @Override
     public Output doAlgorithm(Input input) {
@@ -37,6 +63,7 @@ public class BasicSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
 
         int direction = 0; // 0: right, 1: down, 2: left, 3: up
         int x = 0, y = 0;
+        int inwardStep = calcInwardStep(input) ; // the step to the centre
 
         for (int i = 0; i < length; i++) {
 
@@ -54,11 +81,11 @@ public class BasicSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
             // check if the arrow hits the outer bound of the spiral
             if (direction == 0 && x == width) {
                 direction = 1;
-                width--;
+                width = width - inwardStep;
             } else if (direction == 1 && y == height) {
                 direction = 2;
-                height--;
-            } else if (direction == 2 && x == startWidth - width - 1) {
+                height = height - inwardStep;
+            } else if (direction == 2 && x == startWidth - width - inwardStep) {
                 direction = 3;
             } else if (direction == 3 && y == startHeight - height) {
                 direction = 0;
@@ -69,6 +96,8 @@ public class BasicSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
             output.embedding.add(gp);
     }
     return output;
+    }
+    
         
 }
-}
+
