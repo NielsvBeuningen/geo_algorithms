@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  *
- * @author Niels van Beuningen (n.p.g.t.v.beuningen@student.tue.nl)
+ * @author Koen Kaandorp k.d.kaandorp@student.tue.nl
  */
 public class BasicSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
 

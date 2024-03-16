@@ -19,7 +19,7 @@ import nl.tue.geometrycore.geometry.Vector;
 
 /**
  *
- * @author Wouter Meulemans (w.meulemans@tue.nl)
+ * @author Koen Kaandorp k.d.kaandorp@student.tue.nl
  */
 public class KoenAlgorithm extends BoundaryEmbeddingAlgorithm {
 

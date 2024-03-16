@@ -15,11 +15,9 @@ public class AlgorithmList {
 
     public static BoundaryEmbeddingAlgorithm[] getAlgorithms() {
         return new BoundaryEmbeddingAlgorithm[]{
-            new BasicAlgorithm(),
             new TurboDirector(),
             new BasicSpiralAlgorithm(),
-            new AdvancedSpiralAlgorithm(),
-            new KoenAlgorithm()
+            new AdvancedSpiralAlgorithm()
         };
     }
 }
