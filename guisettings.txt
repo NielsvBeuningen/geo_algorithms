@@ -1,4 +1,4 @@
 #
-#Thu Feb 29 11:21:33 CET 2024
+#Mon Mar 18 16:19:26 CET 2024
 autoExportSolutions=false
-problemPath=C\:\\Users\\20182667\\Documents\\Studie\\Vakken\\Master\\Geo Visualization\\geo_algorithms\\problems
+problemPath=C\:\\Users\\Beheerder\\Documents\\Prive\\University\\Msc\\Year2\\Q3\\Algorithms for Geovisualization\\assignments\\geo_algorithms\\problems

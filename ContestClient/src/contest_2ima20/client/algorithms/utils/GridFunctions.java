@@ -139,7 +139,7 @@ public class GridFunctions {
             return true;
         }
         
-        for (List<Integer> cycle : cycles) {
+        for (List<Integer> cycle: cycles) {
             for (Integer index : cycle) {
                 Direction originalDirection = p.get(index);
                 for (Direction direction : Direction.values()) {
@@ -164,27 +164,6 @@ public class GridFunctions {
             }
         }
 
-        if (cycles.isEmpty()) {
-            for (GridPoint oobPoint : initialOutOfBoundsPoints) {
-                for (Direction direction : Direction.values()) {
-                    List<Direction> pPrime = new ArrayList<>(p);
-                    pPrime.add(direction);
-                    CycleSetAndOutOfBounds resultPrime = findMaxCycleSetOOB(pPrime, grid_width, grid_height);
-                    List<List<Integer>> cycleSetPrime = resultPrime.getCycles();
-                    List<GridPoint> outOfBoundsPointsPrime = resultPrime.getOutOfBoundsPoints();
-    
-                    // Check if the new direction reduces cycles or OOB points
-                    int problems = cycleSetPrime.size() + outOfBoundsPointsPrime.size();
-                    
-                    if (problems <= s - 1) {
-                        boolean found = findSolutionOfSizeNEW(s - 1, pPrime, resultPrime, solution, grid_width, grid_height);
-                        if (found) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
         return false;
     }
 
