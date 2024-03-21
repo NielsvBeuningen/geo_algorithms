@@ -14,7 +14,9 @@ import contest_2ima20.core.boundaryembedding.GridPoint;
 
 // Custom imports
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  *
@@ -45,6 +47,55 @@ public class AdvancedSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
         return step;
     }
 
+    public List<Integer> inwardArrowsIndex(Input input, int length, int i, Direction dirIn, Direction dirOut, int inwardStep) {
+        List<Integer> indexList = new ArrayList<Integer>();
+        List<Integer> indexListIn = new ArrayList<Integer>();
+        List<Integer> indexListOut = new ArrayList<Integer>();
+        int dirInCount = 0;
+        int dirOutCount = 0;
+        int inwardAmount = 0;
+        
+        for (int l = i; l < length; l++) {
+            if(l>input.directions.size()-1) {
+                break;
+            }
+            if (input.directions.get(l) == dirIn) {
+                dirInCount++;
+            } else if (input.directions.get(l) == dirOut && dirOutCount < dirInCount) {
+                length = length + 2;
+                dirOutCount++;
+            }
+        }
+        
+        dirInCount = dirOutCount;
+
+        for (int l = i; l < length; l++) {
+            if (l>input.directions.size()-1) {
+                break;
+            }
+            if (input.directions.get(l) == dirIn && inwardAmount <= inwardStep-1 && dirInCount != 0) {
+                inwardAmount++;
+                length++;
+                dirInCount--;
+                if(indexListOut.size() == 0 || indexListOut.get(indexListOut.size()-1) != l-1) {
+                    indexListIn.add(l);
+                }
+            } else if (input.directions.get(l) == dirOut && dirOutCount > dirInCount) {
+                inwardAmount--;
+                length++;
+                dirOutCount--;
+                if(indexListIn.size() == 0 || indexListIn.get(indexListIn.size()-1) != l-1) {
+                    indexListOut.add(l);
+                }
+            }
+        }
+        indexList.addAll(indexListOut);
+        indexList.addAll(indexListIn);
+        Collections.sort(indexList);
+        System.out.println(indexList);
+        return indexList;
+    }
+
     public Output pathDirectionRight(Input input, int x, int y, int inwardStep, int length, int startDirection, int width, int height) {
         int direction = startDirection;
         int startHeight = height;
@@ -54,31 +105,76 @@ public class AdvancedSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
 
         GridPoint gp = new GridPoint(x, y);
         output.embedding.add(gp); // start point
+
+        List<Integer> indexList = inwardArrowsIndex(input, width-2, 0, Direction.UP, Direction.DOWN, inwardStep);
         
         for (int i = 0; i < length; i++) {
-
             // change coordinates in the dircetion
             if (direction == 0) {
-                x++;
+                if (indexList.size() > 0 && i == indexList.get(0)) {
+                    if (input.directions.get(i) == Direction.UP) {
+                        y++;
+                    } else {
+                        y--;
+                    }
+                    indexList.remove(0);
+                } else {
+                    x++;
+                }
             } else if (direction == 1) {
-                y++;
+                if (indexList.size() > 0 && i == indexList.get(0)) {
+                    if (input.directions.get(i) == Direction.LEFT) {
+                        x--;
+                    } else {
+                        x++;
+                    }
+                    indexList.remove(0);
+                } else {
+                    y++;
+                }
             } else if (direction == 2) {
-                x--;
+                if (indexList.size() > 0 && i == indexList.get(0)) {
+                    if (input.directions.get(i) == Direction.DOWN) {
+                        y--;
+                    } else {
+                        y++;
+                    }
+                    indexList.remove(0);
+                } else {
+                    x--;
+                }
             } else if (direction == 3) {
-                y--;
+                if (indexList.size() > 0 && i == indexList.get(0)) {
+                    if (input.directions.get(i) == Direction.RIGHT) {
+                        x++;
+                    } else {
+                        x--;
+                    }
+                    indexList.remove(0);
+                } else {
+                    y--;
+                };
             }
 
             // check if the arrow hits the outer bound of the spiral
             if (direction == 0 && x == width) {
                 direction = 1;
                 width = width - inwardStep;
+                indexList.clear();
+                indexList = inwardArrowsIndex(input, width+i-2, i+2, Direction.LEFT, Direction.RIGHT, inwardStep);
             } else if (direction == 1 && y == height) {
                 direction = 2;
                 height = height - inwardStep;
+                indexList.clear();
+                indexList = inwardArrowsIndex(input, height+i-2, i+2, Direction.DOWN, Direction.UP, inwardStep);
             } else if (direction == 2 && x == startWidth - width - inwardStep) {
                 direction = 3;
+                indexList.clear();
+                indexList = inwardArrowsIndex(input, width+i-2, i+2, Direction.RIGHT, Direction.LEFT, inwardStep);
             } else if (direction == 3 && y == startHeight - height) {
                 direction = 0;
+                indexList.clear();
+                indexList = inwardArrowsIndex(input, height+i-2, i+2, Direction.UP, Direction.DOWN, inwardStep);
             }
 
             // add the grid point
@@ -250,7 +346,7 @@ public class AdvancedSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
         int width = input.width;
         double bestPenalty = 99999999999999.99;
         Output bestOutput = new Output(input);
-
+        
         for (int x = 0; x < width+1; x++) {
             for (int y = 0; y < width+1; y++) {
                 if (x == 0 || x == width || y == 0 || y == width) {
@@ -262,6 +358,7 @@ public class AdvancedSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
                 }
             }
         }
+        //bestOutput = determinePath(input,0, 0, inwardStep);
         return bestOutput;
     }
 
