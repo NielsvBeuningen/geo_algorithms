@@ -65,32 +65,7 @@ public class OptimusPriem extends BoundaryEmbeddingAlgorithm {
         return output;
     }
 
-    public static List<List<Integer>> findMaxCycleSet(List<Direction> P) {
-        List<GridPoint> coordinates = new ArrayList<>();
-        Set<List<Integer>> cycleSet = new HashSet<>(); // Use a Set to avoid duplicate cycles
-        
-        Map<GridPoint, Integer> coordinateToIndexMap = new HashMap<>();
-
-        GridPoint currentCoordinate = new GridPoint(0, 0);
-        coordinates.add(currentCoordinate);
-        coordinateToIndexMap.put(currentCoordinate, 0);
-
-        for (int i = 0; i < P.size(); i++) {
-            GridPoint nextCoordinate = getNextCoordinate(currentCoordinate, P.get(i));
-            if (coordinateToIndexMap.containsKey(nextCoordinate)) {
-                int cycleStartIndex = coordinateToIndexMap.get(nextCoordinate);
-                List<Integer> cycle = IntStream.rangeClosed(cycleStartIndex, i)
-                                                .boxed()
-                                                .collect(Collectors.toList());
-                cycleSet.add(cycle);
-            } else {
-                coordinates.add(nextCoordinate);
-                coordinateToIndexMap.put(nextCoordinate, i + 1);
-            }
-            currentCoordinate = nextCoordinate;
-        }
-        return new ArrayList<>(cycleSet); // Convert Set to List
-    }
+    
 
     
     
@@ -146,9 +121,19 @@ public class OptimusPriem extends BoundaryEmbeddingAlgorithm {
                 GridPoint nextCoordinate = getNextCoordinate(currentCoordinate, P.get(i));
         
                 // Check whether next coordinate increases the width or height, if so, add to out of bounds points
-                if (nextCoordinate.getIntX() > max_X || nextCoordinate.getIntX() < min_X) {
+                if (nextCoordinate.getIntX() > max_X) {
+                    max_X = nextCoordinate.getIntX();
                     width_counter++;
-                } else if (nextCoordinate.getIntY() > max_Y || nextCoordinate.getIntY() < min_Y) {
+                } else if (nextCoordinate.getIntX() < min_X) {
+                    min_X = nextCoordinate.getIntX();
+                    width_counter++;
+                } 
+
+                if (nextCoordinate.getIntY() > max_Y){
+                    max_Y = nextCoordinate.getIntY();
+                    height_counter++;
+                } else if (nextCoordinate.getIntY() < min_Y) {
+                    min_Y = nextCoordinate.getIntY();
                     height_counter++;
                 }
 
@@ -190,17 +175,13 @@ public class OptimusPriem extends BoundaryEmbeddingAlgorithm {
         int start_y) {
         
         List<List<Integer>> init_problems = initialResults.getProblems();
-        // List<GridPoint> initialOutOfBoundsPoints = initialResults.getOutOfBoundsPoints();
 
-        // System.out.println("OOB points: " + initialOutOfBoundsPoints.size() + " Cycles: " + cycles.size());
-        System.out.println("Problems: " + init_problems.size() + " Size: " + s);
         if (init_problems.isEmpty() || s == 0) {
             solution.addAll(p); // Assuming solution is initially empty
             return true;
         }
         
         for (List<Integer> problem: init_problems) {
-            System.out.println("Problem: " + problem);
             for (Integer index: problem) {
                 Direction originalDirection = p.get(index);
                 for (Direction direction : Direction.values()) {
@@ -212,11 +193,9 @@ public class OptimusPriem extends BoundaryEmbeddingAlgorithm {
                             grid_width, grid_height, 
                             start_x, start_y);
                         List<List<Integer>> problems = resultPrime.getProblems();
-                        // List<GridPoint> outOfBoundsPointsPrime = resultPrime.getOutOfBoundsPoints();
-    
-                        // Check if the new direction reduces cycles or OOB points
-                        // int problems = cycleSetPrime.size() + outOfBoundsPointsPrime.size();
-                        
+                           
+                        System.out.println("Problems size: " + problems.size());
+
                         if (problems.size() <= s - 1) {
                             boolean found = getSolutionSize(
                                 s - 1, 
@@ -252,13 +231,7 @@ public class OptimusPriem extends BoundaryEmbeddingAlgorithm {
         System.out.println("Lower bound: " + lowerBound);
         System.out.println("Path size: " + p.size());
 
-        int max_steps = lowerBound;
-
-        if (lowerBound > p.size()) {
-            max_steps = p.size();
-        }
-
-        for (int i = max_steps; i <= p.size(); i++) {
+        for (int i = lowerBound; i <= p.size(); i++) {
             System.out.println("Trying size " + i);
             if (getSolutionSize(
                 i, 
