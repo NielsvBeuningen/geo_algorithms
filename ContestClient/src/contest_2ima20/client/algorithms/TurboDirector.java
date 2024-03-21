@@ -31,16 +31,37 @@ public class TurboDirector extends BoundaryEmbeddingAlgorithm {
         int start_x = 0;
         int start_y = 0;
         GridPoint start_gp = new GridPoint(start_x, start_y);
-        
-        // Use smart brute force to find the best solution
-        List<Direction> best_solution = GridFunctions.smartBruteForce(input.directions, input.width, input.height);
+        List<Direction> final_solution = new ArrayList<>();
 
-        // INCLUDE STARTING POSITION MECHANICS
+        // Loop over possible starting positions and find solution
+        for (int x = 0; x < input.width; x++) {
+            for (int y = 0; y < input.height; y++) {
+                System.out.println("Trying starting position: " + x + ", " + y);
+                // Use smart brute force to find the best solution
+                List<Direction> best_solution = GridFunctions.smartBruteForce(
+                    input.directions, 
+                    input.width, 
+                    input.height,
+                    x, y);
+
+                // If length of solution is larger than 0 break
+                if (best_solution.size() > 0) {
+                    start_x = x;
+                    start_y = y;
+                    start_gp = new GridPoint(start_x, start_y);
+                    final_solution = best_solution;
+                    break;
+                }
+            }
+            if (final_solution.size() > 0) {
+                break;
+            }
+        }
 
         // Convert the best solution to a list of GridPoints
         List<GridPoint> best_solution_gp = new ArrayList<>();
         best_solution_gp.add(start_gp);
-        for (Direction d : best_solution) {
+        for (Direction d : final_solution) {
             GridPoint next_gp = new GridPoint(best_solution_gp.get(best_solution_gp.size() - 1));
             next_gp.translate(d.toVector());
             best_solution_gp.add(next_gp);

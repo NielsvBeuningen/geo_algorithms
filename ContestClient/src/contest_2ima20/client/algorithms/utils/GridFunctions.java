@@ -93,14 +93,14 @@ public class GridFunctions {
     
 
 
-    public static CycleSetAndOutOfBounds findMaxCycleSetOOB(List<Direction> P, int grid_width, int grid_height) {
+    public static CycleSetAndOutOfBounds findMaxCycleSetOOB(List<Direction> P, int grid_width, int grid_height, int start_x, int start_y) {
         List<GridPoint> coordinates = new ArrayList<>();
         Set<List<Integer>> cycleSet = new HashSet<>();
         List<GridPoint> outOfBoundsPoints = new ArrayList<>();
     
         Map<GridPoint, Integer> coordinateToIndexMap = new HashMap<>();
     
-        GridPoint currentCoordinate = new GridPoint(0, 0);
+        GridPoint currentCoordinate = new GridPoint(start_x, start_y);
         coordinates.add(currentCoordinate);
         coordinateToIndexMap.put(currentCoordinate, 0);
     
@@ -127,12 +127,20 @@ public class GridFunctions {
         return new CycleSetAndOutOfBounds(new ArrayList<>(cycleSet), outOfBoundsPoints);
     }
 
-    public static boolean findSolutionOfSizeNEW(int s, List<Direction> p, CycleSetAndOutOfBounds initialResults, List<Direction> solution, int grid_width, int grid_height) {
+    public static boolean findSolutionOfSizeNEW(
+        int s, 
+        List<Direction> p, 
+        CycleSetAndOutOfBounds initialResults, 
+        List<Direction> solution, 
+        int grid_width, 
+        int grid_height,
+        int start_x,
+        int start_y) {
         
         List<List<Integer>> cycles = initialResults.getCycles();
         List<GridPoint> initialOutOfBoundsPoints = initialResults.getOutOfBoundsPoints();
 
-        System.out.println("OOB points: " + initialOutOfBoundsPoints.size() + " Cycles: " + cycles.size());
+        // System.out.println("OOB points: " + initialOutOfBoundsPoints.size() + " Cycles: " + cycles.size());
 
         if ((cycles.isEmpty() && initialOutOfBoundsPoints.isEmpty()) || s == 0) {
             solution.addAll(p); // Assuming solution is initially empty
@@ -146,7 +154,10 @@ public class GridFunctions {
                     if (direction != originalDirection) {
                         List<Direction> pPrime = new ArrayList<>(p);
                         pPrime.set(index, direction);
-                        CycleSetAndOutOfBounds resultPrime = findMaxCycleSetOOB(pPrime, grid_width, grid_height);
+                        CycleSetAndOutOfBounds resultPrime = findMaxCycleSetOOB(
+                            pPrime, 
+                            grid_width, grid_height, 
+                            start_x, start_y);
                         List<List<Integer>> cycleSetPrime = resultPrime.getCycles();
                         List<GridPoint> outOfBoundsPointsPrime = resultPrime.getOutOfBoundsPoints();
     
@@ -154,7 +165,12 @@ public class GridFunctions {
                         int problems = cycleSetPrime.size() + outOfBoundsPointsPrime.size();
                         
                         if (problems <= s - 1) {
-                            boolean found = findSolutionOfSizeNEW(s - 1, pPrime, resultPrime, solution, grid_width, grid_height);
+                            boolean found = findSolutionOfSizeNEW(
+                                s - 1, 
+                                pPrime, resultPrime, 
+                                solution, 
+                                grid_width, grid_height,
+                                start_x, start_y);
                             if (found) {
                                 return true;
                             }
@@ -167,8 +183,11 @@ public class GridFunctions {
         return false;
     }
 
-    public static List<Direction> smartBruteForce(List<Direction> p, int grid_width, int grid_height) {
-        CycleSetAndOutOfBounds maxCycleSetOOB = findMaxCycleSetOOB(p, grid_width, grid_height);
+    public static List<Direction> smartBruteForce(List<Direction> p, int grid_width, int grid_height, int start_x, int start_y) {
+        CycleSetAndOutOfBounds maxCycleSetOOB = findMaxCycleSetOOB(
+            p, 
+            grid_width, grid_height,
+            start_x, start_y);
         int lowerBound = maxCycleSetOOB.getCycles().size();
         int OOB_bound = maxCycleSetOOB.getOutOfBoundsPoints().size();
 
@@ -185,13 +204,18 @@ public class GridFunctions {
 
         for (int i = problems; i <= p.size(); i++) {
             System.out.println("Trying size " + i);
-            if (findSolutionOfSizeNEW(i, new ArrayList<>(p), maxCycleSetOOB, solution, grid_width, grid_height)) {
+            if (findSolutionOfSizeNEW(
+                i, 
+                new ArrayList<>(p), maxCycleSetOOB, 
+                solution, 
+                grid_width, grid_height,
+                start_x, start_y)) {
                 System.out.println("Found solution of size " + i);
                 return solution;
             }
         }
         
         System.out.println("No solution found");
-        return p; // Return an empty list if no solution
+        return new ArrayList<Direction>(); // Return an empty list if no solution
     }
 }
