@@ -9,7 +9,6 @@ import contest_2ima20.core.boundaryembedding.Input;
 import contest_2ima20.core.boundaryembedding.Output;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.stream.IntStream;
 import contest_2ima20.client.boundaryembedding.BoundaryEmbeddingAlgorithm;
 import contest_2ima20.core.boundaryembedding.Direction;
 import contest_2ima20.core.boundaryembedding.GridPoint;
-
+import contest_2ima20.client.algorithms.utils.GridFunctions;
 // Custom import
 import contest_2ima20.client.algorithms.utils.Problems;
 
@@ -57,6 +56,8 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
             best_solution_gp.add(next_gp);
         }
 
+        List<GridPoint> translated_solution_gp = GridFunctions.translateSolution(best_solution_gp, input);
+
         // Add the best solution to the output
         for (GridPoint gp : best_solution_gp) {
             output.embedding.add(gp);
@@ -85,16 +86,12 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         }
     }
 
-    private static final int MAX_RECURSION_DEPTH = 20;
-
     public static Problems getCyclesOOB(
         List<Direction> P, 
         int grid_width, int grid_height, 
         int start_x, int start_y) {
 
             List<GridPoint> coordinates = new ArrayList<>();
-            // Set<List<Integer>> cycleSet = new HashSet<>();
-            // Set<List<Integer>> outOfBoundsPoints = new HashSet<>();
         
             Set<List<Integer>> problems = new HashSet<>();
 
@@ -106,9 +103,6 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         
 
             // OOB variables
-            int total_width = 0;
-            int total_height = 0;
-
             int width_counter = 0;
             int height_counter = 0;
 
@@ -127,9 +121,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                 } else if (nextCoordinate.getIntX() < min_X) {
                     min_X = nextCoordinate.getIntX();
                     width_counter++;
-                } 
-
-                if (nextCoordinate.getIntY() > max_Y){
+                } else if (nextCoordinate.getIntY() > max_Y){
                     max_Y = nextCoordinate.getIntY();
                     height_counter++;
                 } else if (nextCoordinate.getIntY() < min_Y) {
@@ -137,17 +129,14 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                     height_counter++;
                 }
 
-                if (width_counter > total_width) {
-                    total_width = width_counter;
+                if (width_counter > grid_width) {
                     List<Integer> indices = IntStream.rangeClosed(i, i).boxed().collect(Collectors.toList());
                     problems.add(indices);
-                }
-                if (height_counter > total_height) {
-                    total_height = height_counter;
+                } else if (height_counter > grid_height) {
                     List<Integer> indices = IntStream.rangeClosed(i, i).boxed().collect(Collectors.toList());
                     problems.add(indices);
-                }
-        
+                } 
+                
                 if (coordinateToIndexMap.containsKey(nextCoordinate)) {
                     int cycleStartIndex = coordinateToIndexMap.get(nextCoordinate);
                     List<Integer> cycle = IntStream.rangeClosed(cycleStartIndex, i)
@@ -180,13 +169,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         int grid_width, 
         int grid_height,
         int start_x,
-        int start_y,
-        int depth) { // Add depth parameter
-    
-        // Check if maximum recursion depth is reached
-        if (depth > MAX_RECURSION_DEPTH) {
-            return false;
-        }
+        int start_y) { // Add depth parameter
 
         String key = createMemoKey(s, p, grid_width, grid_height, start_x, start_y);
         if (memo.containsKey(key)) {
@@ -212,8 +195,6 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                             grid_width, grid_height, 
                             start_x, start_y);
                         List<List<Integer>> problems = resultPrime.getProblems();
-                           
-                        System.out.println("Problems size: " + problems.size());
 
                         if (problems.size() <= s - 1) {
                             Boolean found = getSolutionSize(
@@ -221,8 +202,8 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                                 pPrime, resultPrime, 
                                 solution, 
                                 grid_width, grid_height,
-                                start_x, start_y,
-                                depth + 1);
+                                start_x, start_y);
+
                             if (found) {
                                 memo.put(key, found);
                                 return true;
@@ -258,8 +239,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                 new ArrayList<>(p), maxCycleSetOOB, 
                 solution, 
                 grid_width, grid_height,
-                start_x, start_y,
-                0)) {
+                start_x, start_y)) {
                 System.out.println("Found solution of size " + i);
                 return solution;
             }

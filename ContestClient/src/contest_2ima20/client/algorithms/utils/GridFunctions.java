@@ -1,11 +1,11 @@
 package contest_2ima20.client.algorithms.utils;
 
 import contest_2ima20.core.boundaryembedding.GridPoint;
+import contest_2ima20.core.boundaryembedding.Input;
 import contest_2ima20.core.boundaryembedding.Direction;
 
-import contest_2ima20.client.algorithms.utils.CycleSetAndOutOfBounds;
+import nl.tue.geometrycore.geometry.Vector;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -217,5 +217,84 @@ public class GridFunctions {
 
         System.out.println("No solution found");
         return new ArrayList<Direction>(); // Return an empty list if no solution
+    }
+
+    // This function translates the entire solution to a starting position such that the solution fits
+    public static List<GridPoint> translateSolution(List<GridPoint> solution, Input input) {
+        
+        // First find the dimensions of the solution
+        int minX = 0;
+        int minY = 0;
+        int maxX = 0;
+        int maxY = 0;
+
+        for (GridPoint point : solution) {
+            if (point.getIntX() < minX) {
+                minX = point.getIntX();
+            } else if (point.getIntX() > maxX) {
+                maxX = point.getIntX();
+            }
+            if (point.getIntY() < minY) {
+                minY = point.getIntY();
+            } else if (point.getIntY() > maxY) {
+                maxY = point.getIntY();
+            }
+        }
+        // Solution dimensions defined as Vector(Width, Height)
+        // int solWidth = maxX - minX;
+        // int solHeight = maxY - minY;
+
+        // Input dimensions
+        Vector dimensions = new Vector(input.width, input.height);
+
+        // Initialize the minimal penalty for all translations
+        Integer minPenalty = 100000;
+        Vector bestTranslation = new Vector(0,0);
+
+        if (getTranslationPenalty(solution, dimensions, new Vector(input.width-maxX, input.height-maxY)) <= minPenalty) {
+            // Upper right corner
+            minPenalty = getTranslationPenalty(solution, dimensions, new Vector(input.width-maxX, input.height-maxY));
+            bestTranslation = new Vector(input.width-maxX, input.height-maxY);
+            System.out.printf("Best translation is upper right with a penalty of: %d%n", minPenalty);
+        }
+        if (getTranslationPenalty(solution, dimensions, new Vector(-1*minX, input.height-maxY)) <= minPenalty) {
+            // Upper left corner
+            minPenalty = getTranslationPenalty(solution, dimensions, new Vector(-1*minX, input.height-maxY));
+            bestTranslation = new Vector(-1*minX, input.height-maxY);
+            System.out.printf("Best translation is upper left with a penalty of: %d%n", minPenalty);
+        } 
+        if (getTranslationPenalty(solution, dimensions, new Vector(input.width-maxX, -1*minY)) <= minPenalty) {
+            // Lower right corner
+            minPenalty = getTranslationPenalty(solution, dimensions, new Vector(input.width-maxX, -1*minY));
+            bestTranslation = new Vector(input.width-maxX, -1*minY);
+            System.out.printf("Best translation is lower right with a penalty of: %d%n", minPenalty);
+        } 
+        if (getTranslationPenalty(solution, dimensions, new Vector(-1*minX, -1*minY)) <= minPenalty) {
+            // Lower left corner
+            minPenalty = getTranslationPenalty(solution, dimensions, new Vector(-1*minX, -1*minY));
+            bestTranslation = new Vector(-1*minX, -1*minY);
+            System.out.printf("Best translation is lower left with a penalty of: %d%n", minPenalty);
+        } 
+        
+        for (GridPoint p : solution) {
+            p.translate(bestTranslation);
+        }
+        
+        return solution;
+    }
+
+    // Function to get the penalty of a translation
+    public static int getTranslationPenalty(List<GridPoint> solution, Vector dimensions, Vector translation) {
+        // Initialize penalty to 0
+        int penalty = 0;
+
+        // Per point check if it is out of bounds, if so add to the penalty
+        for (GridPoint point : solution) {
+            Vector newPoint = Vector.add(point, translation);
+            if (newPoint.getX() < 0 || newPoint.getX() > dimensions.getX() || newPoint.getY() < 0 || newPoint.getY() > dimensions.getY()) {
+                penalty++;
+            }
+        }
+        return penalty;
     }
 }
