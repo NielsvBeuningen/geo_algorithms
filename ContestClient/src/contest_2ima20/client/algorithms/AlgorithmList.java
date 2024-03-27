@@ -17,8 +17,9 @@ public class AlgorithmList {
         return new BoundaryEmbeddingAlgorithm[]{
             new ArbitraryAlgorithm(),
             new BasicAlgorithm(),
-            new OptimusPriem(),
-            new KoenAlgorithm()
+            new BumbleBeter(),
+            new KoenAlgorithm(),
+            new OptimusPriem()
         };
     }
 }
