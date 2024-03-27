@@ -1,7 +1,6 @@
 package contest_2ima20.client.algorithms.utils;
 
 import contest_2ima20.core.boundaryembedding.GridPoint;
-import contest_2ima20.core.boundaryembedding.Direction;
 
 import java.util.List;
 

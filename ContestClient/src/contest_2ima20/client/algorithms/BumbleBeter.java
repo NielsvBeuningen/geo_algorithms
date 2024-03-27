@@ -85,7 +85,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         }
     }
 
-
+    private static final int MAX_RECURSION_DEPTH = 20;
 
     public static Problems getCyclesOOB(
         List<Direction> P, 
@@ -164,6 +164,14 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
             return new Problems(new ArrayList<>(problems));
     }
 
+    private static Map<String, Boolean> memo = new HashMap<>();
+
+    private static String createMemoKey(int s, List<Direction> p, int grid_width, int grid_height, int start_x, int start_y) {
+        // Create a unique key based on parameters. This is a simplified version.
+        // Consider including more specifics to avoid collisions.
+        return s + "-" + p.toString() + "-" + grid_width + "-" + grid_height + "-" + start_x + "-" + start_y;
+    }
+
     public static boolean getSolutionSize(
         int s, 
         List<Direction> p, 
@@ -172,7 +180,18 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         int grid_width, 
         int grid_height,
         int start_x,
-        int start_y) {
+        int start_y,
+        int depth) { // Add depth parameter
+    
+        // Check if maximum recursion depth is reached
+        if (depth > MAX_RECURSION_DEPTH) {
+            return false;
+        }
+
+        String key = createMemoKey(s, p, grid_width, grid_height, start_x, start_y);
+        if (memo.containsKey(key)) {
+            return memo.get(key);
+        }
         
         List<List<Integer>> init_problems = initialResults.getProblems();
 
@@ -197,13 +216,15 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                         System.out.println("Problems size: " + problems.size());
 
                         if (problems.size() <= s - 1) {
-                            boolean found = getSolutionSize(
+                            Boolean found = getSolutionSize(
                                 s - 1, 
                                 pPrime, resultPrime, 
                                 solution, 
                                 grid_width, grid_height,
-                                start_x, start_y);
+                                start_x, start_y,
+                                depth + 1);
                             if (found) {
+                                memo.put(key, found);
                                 return true;
                             }
                         }
@@ -211,7 +232,6 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                 }
             }
         }
-
         return false;
     }
 
@@ -238,7 +258,8 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                 new ArrayList<>(p), maxCycleSetOOB, 
                 solution, 
                 grid_width, grid_height,
-                start_x, start_y)) {
+                start_x, start_y,
+                0)) {
                 System.out.println("Found solution of size " + i);
                 return solution;
             }

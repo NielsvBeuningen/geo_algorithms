@@ -166,6 +166,14 @@ public class OptimusPriem extends BoundaryEmbeddingAlgorithm {
             return new CycleSetAndOutOfBounds(new ArrayList<>(cycleSet), outOfBoundsPoints);
     }
 
+    private static Map<String, Boolean> memo = new HashMap<>();
+
+    private static String createMemoKey(int s, List<Direction> p, int grid_width, int grid_height, int start_x, int start_y) {
+        // Create a unique key based on parameters. This is a simplified version.
+        // Consider including more specifics to avoid collisions.
+        return s + "-" + p.toString() + "-" + grid_width + "-" + grid_height + "-" + start_x + "-" + start_y;
+    }
+
     public static boolean findSolution(
         int s, 
         List<Direction> p, 
@@ -179,7 +187,10 @@ public class OptimusPriem extends BoundaryEmbeddingAlgorithm {
         List<List<Integer>> cycles = initialResults.getCycles();
         List<GridPoint> initialOutOfBoundsPoints = initialResults.getOutOfBoundsPoints();
 
-        // System.out.println("OOB points: " + initialOutOfBoundsPoints.size() + " Cycles: " + cycles.size());
+        String key = createMemoKey(s, p, grid_width, grid_height, start_x, start_y);
+        if (memo.containsKey(key)) {
+            return memo.get(key);
+        }
 
         if ((cycles.isEmpty() && initialOutOfBoundsPoints.isEmpty()) || s == 0) {
             solution.addAll(p); // Assuming solution is initially empty
@@ -211,6 +222,7 @@ public class OptimusPriem extends BoundaryEmbeddingAlgorithm {
                                 grid_width, grid_height,
                                 start_x, start_y);
                             if (found) {
+                                memo.put(key, found);
                                 return true;
                             }
                         }
