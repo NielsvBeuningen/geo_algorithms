@@ -1,4 +1,7 @@
 #
-#Mon Mar 18 16:19:26 CET 2024
+#Thu Mar 28 08:55:48 CET 2024
+teamName=Group13Autobots
+connectionString=https\://catvis.win.tue.nl/2img15/submit/
 autoExportSolutions=false
-problemPath=C\:\\Users\\Beheerder\\Documents\\Prive\\University\\Msc\\Year2\\Q3\\Algorithms for Geovisualization\\assignments\\geo_algorithms\\problems
+problemPath=C\:\\Users\\Beheerder\\Documents\\Prive\\University\\Msc\\Year2\\Q3\\Algorithms for Geovisualization\\assignments\\geo_algorithms\\live\\problems
+sharedSecret=Werollout

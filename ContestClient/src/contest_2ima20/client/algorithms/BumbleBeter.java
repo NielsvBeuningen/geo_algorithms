@@ -229,23 +229,17 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         
         List<Direction> solution = new ArrayList<>();
 
-        System.out.println("Lower bound: " + lowerBound);
-        System.out.println("Path size: " + p.size());
-
         for (int i = lowerBound; i <= p.size(); i++) {
-            System.out.println("Trying size " + i);
             if (getSolutionSize(
                 i, 
                 new ArrayList<>(p), maxCycleSetOOB, 
                 solution, 
                 grid_width, grid_height,
                 start_x, start_y)) {
-                System.out.println("Found solution of size " + i);
                 return solution;
             }
         }
         
-        System.out.println("No solution found");
         return new ArrayList<Direction>(); // Return an empty list if no solution
     }
 
