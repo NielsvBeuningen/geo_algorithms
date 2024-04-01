@@ -59,7 +59,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         List<GridPoint> translated_solution_gp = GridFunctions.translateSolution(best_solution_gp, input);
 
         // Add the best solution to the output
-        for (GridPoint gp : best_solution_gp) {
+        for (GridPoint gp : translated_solution_gp) {
             output.embedding.add(gp);
         }
 
@@ -135,9 +135,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                 } else if (height_counter > grid_height) {
                     List<Integer> indices = IntStream.rangeClosed(i, i).boxed().collect(Collectors.toList());
                     problems.add(indices);
-                } 
-                
-                if (coordinateToIndexMap.containsKey(nextCoordinate)) {
+                } else if (coordinateToIndexMap.containsKey(nextCoordinate)) {
                     int cycleStartIndex = coordinateToIndexMap.get(nextCoordinate);
                     List<Integer> cycle = IntStream.rangeClosed(cycleStartIndex, i)
                                                     .boxed()
@@ -153,14 +151,6 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
             return new Problems(new ArrayList<>(problems));
     }
 
-    private static Map<String, Boolean> memo = new HashMap<>();
-
-    private static String createMemoKey(int s, List<Direction> p, int grid_width, int grid_height, int start_x, int start_y) {
-        // Create a unique key based on parameters. This is a simplified version.
-        // Consider including more specifics to avoid collisions.
-        return s + "-" + p.toString() + "-" + grid_width + "-" + grid_height + "-" + start_x + "-" + start_y;
-    }
-
     public static boolean getSolutionSize(
         int s, 
         List<Direction> p, 
@@ -169,12 +159,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         int grid_width, 
         int grid_height,
         int start_x,
-        int start_y) { // Add depth parameter
-
-        String key = createMemoKey(s, p, grid_width, grid_height, start_x, start_y);
-        if (memo.containsKey(key)) {
-            return memo.get(key);
-        }
+        int start_y) {
         
         List<List<Integer>> init_problems = initialResults.getProblems();
 
@@ -197,6 +182,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                         List<List<Integer>> problems = resultPrime.getProblems();
 
                         if (problems.size() <= s - 1) {
+                            System.out.println(problems.size());
                             Boolean found = getSolutionSize(
                                 s - 1, 
                                 pPrime, resultPrime, 
@@ -205,7 +191,6 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                                 start_x, start_y);
 
                             if (found) {
-                                memo.put(key, found);
                                 return true;
                             }
                         }

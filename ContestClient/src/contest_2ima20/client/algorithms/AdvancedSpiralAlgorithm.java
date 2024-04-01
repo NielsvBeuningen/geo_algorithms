@@ -7,7 +7,6 @@ package contest_2ima20.client.algorithms;
 
 import contest_2ima20.core.boundaryembedding.Input;
 import contest_2ima20.core.boundaryembedding.Output;
-import nl.tue.geometrycore.geometry.Vector;
 import contest_2ima20.client.boundaryembedding.BoundaryEmbeddingAlgorithm;
 import contest_2ima20.core.boundaryembedding.Direction;
 import contest_2ima20.core.boundaryembedding.GridPoint;
@@ -16,7 +15,6 @@ import contest_2ima20.core.boundaryembedding.GridPoint;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  *
