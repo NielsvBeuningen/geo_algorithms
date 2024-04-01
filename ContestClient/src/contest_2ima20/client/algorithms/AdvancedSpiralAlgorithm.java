@@ -92,7 +92,6 @@ public class AdvancedSpiralAlgorithm extends BoundaryEmbeddingAlgorithm {
         indexList.addAll(indexListOut);
         indexList.addAll(indexListIn);
         Collections.sort(indexList);
-        System.out.println(indexList);
         return indexList;
     }
 
