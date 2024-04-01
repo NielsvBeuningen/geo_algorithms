@@ -38,14 +38,10 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         int start_y = 0;
         GridPoint start_gp = new GridPoint(start_x, start_y);
 
-
+        // Find the best solution
         List<Direction> best_solution = findSolution(
             input.directions, 
-            input.width, 
-            input.height,
-            start_x, start_y);
-
-        
+            input.width, input.height);
 
         // Convert the best solution to a list of GridPoints
         List<GridPoint> best_solution_gp = new ArrayList<>();
@@ -56,6 +52,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
             best_solution_gp.add(next_gp);
         }
 
+        // Translate the solution to the correct coordinates
         List<GridPoint> translated_solution_gp = GridFunctions.translateSolution(best_solution_gp, input);
 
         // Add the best solution to the output
@@ -65,11 +62,6 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
 
         return output;
     }
-
-    
-
-    
-    
 
     private static GridPoint getNextCoordinate(GridPoint currentCoordinate, Direction direction) {
         switch (direction) {
@@ -168,14 +160,18 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
             for (Integer index: problem) {
                 Direction originalDirection = p.get(index);
                 for (Direction direction : Direction.values()) {
+                    // Skip the original direction
                     if (direction != originalDirection) {
                         List<Direction> pPrime = new ArrayList<>(p);
                         pPrime.set(index, direction);
+
+                        // Check if the new path has problems
                         Problems resultPrime = getCyclesOOB(
                             pPrime, 
                             grid_width, grid_height);
                         List<List<Integer>> problems = resultPrime.getProblems();
 
+                        // If the new path has less problems, try to find a solution with the new path
                         if (problems.size() <= s - 1) {
                             Boolean found = getSolutionSize(
                                 s - 1, 
@@ -194,7 +190,8 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         return false;
     }
 
-    public static List<Direction> findSolution(List<Direction> p, int grid_width, int grid_height, int start_x, int start_y) {
+    public static List<Direction> findSolution(List<Direction> p, int grid_width, int grid_height) {
+        // Get the maximum list of cycle sets and out of bound points
         Problems maxCycleSetOOB = getCyclesOOB(
             p, 
             grid_width, grid_height);
@@ -206,6 +203,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         
         List<Direction> solution = new ArrayList<>();
 
+        // Try to find a solution with a smaller cycle set
         for (int i = lowerBound; i <= p.size(); i++) {
             if (getSolutionSize(
                 i, 

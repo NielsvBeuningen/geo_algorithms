@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Niels van Beuningen (n.p.g.t.v.beuningen@student.tue.nl)
  */
-public class BasicAlgorithm extends BoundaryEmbeddingAlgorithm {
+public class DisplayAlgorithm extends BoundaryEmbeddingAlgorithm {
     private boolean isValidPlacement(List<GridPoint> temp_output, GridPoint gp, int W, int H) {
         // Check grid bounds
         if (gp.getX() < 0 || gp.getX() > W || gp.getY() < 0 || gp.getY() > H) return false;
