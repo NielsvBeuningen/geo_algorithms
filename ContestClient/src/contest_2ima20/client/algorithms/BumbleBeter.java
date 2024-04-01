@@ -155,10 +155,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
         List<Direction> p, 
         Problems initialResults, 
         List<Direction> solution, 
-        int grid_width, 
-        int grid_height,
-        int start_x,
-        int start_y) {
+        int grid_width, int grid_height) {
         
         List<List<Integer>> init_problems = initialResults.getProblems();
 
@@ -184,8 +181,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                                 s - 1, 
                                 pPrime, resultPrime, 
                                 solution, 
-                                grid_width, grid_height,
-                                start_x, start_y);
+                                grid_width, grid_height);
 
                             if (found) {
                                 return true;
@@ -215,8 +211,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                 i, 
                 new ArrayList<>(p), maxCycleSetOOB, 
                 solution, 
-                grid_width, grid_height,
-                start_x, start_y)) {
+                grid_width, grid_height)) {
                 return solution;
             }
         }
