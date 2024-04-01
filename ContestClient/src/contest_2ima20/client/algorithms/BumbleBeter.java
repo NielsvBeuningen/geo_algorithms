@@ -88,8 +88,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
 
     public static Problems getCyclesOOB(
         List<Direction> P, 
-        int grid_width, int grid_height, 
-        int start_x, int start_y) {
+        int grid_width, int grid_height) {
 
             List<GridPoint> coordinates = new ArrayList<>();
         
@@ -97,7 +96,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
 
             Map<GridPoint, Integer> coordinateToIndexMap = new HashMap<>();
         
-            GridPoint currentCoordinate = new GridPoint(start_x, start_y);
+            GridPoint currentCoordinate = new GridPoint(0, 0);
             coordinates.add(currentCoordinate);
             coordinateToIndexMap.put(currentCoordinate, 0);
         
@@ -177,12 +176,10 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
                         pPrime.set(index, direction);
                         Problems resultPrime = getCyclesOOB(
                             pPrime, 
-                            grid_width, grid_height, 
-                            start_x, start_y);
+                            grid_width, grid_height);
                         List<List<Integer>> problems = resultPrime.getProblems();
 
                         if (problems.size() <= s - 1) {
-                            System.out.println(problems.size());
                             Boolean found = getSolutionSize(
                                 s - 1, 
                                 pPrime, resultPrime, 
@@ -204,8 +201,7 @@ public class BumbleBeter extends BoundaryEmbeddingAlgorithm {
     public static List<Direction> findSolution(List<Direction> p, int grid_width, int grid_height, int start_x, int start_y) {
         Problems maxCycleSetOOB = getCyclesOOB(
             p, 
-            grid_width, grid_height,
-            start_x, start_y);
+            grid_width, grid_height);
         int lowerBound = maxCycleSetOOB.getProblems().size();
 
         if (lowerBound == 0) {
