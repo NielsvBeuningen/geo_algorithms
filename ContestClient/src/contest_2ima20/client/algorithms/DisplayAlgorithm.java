@@ -23,8 +23,9 @@ public class DisplayAlgorithm extends BoundaryEmbeddingAlgorithm {
 
     @Override
     public Output doAlgorithm(Input input) {
+        // input.width and input.height are the dimensions of the grid
         int START_X = 0;
-        int START_Y = 0;
+        int START_Y = input.height/2;
 
         // creating an output
         Output output = new Output(input);
