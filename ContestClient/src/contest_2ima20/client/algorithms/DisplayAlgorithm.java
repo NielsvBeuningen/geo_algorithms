@@ -20,37 +20,18 @@ import java.util.List;
  * @author Niels van Beuningen (n.p.g.t.v.beuningen@student.tue.nl)
  */
 public class DisplayAlgorithm extends BoundaryEmbeddingAlgorithm {
-    private boolean isValidPlacement(List<GridPoint> temp_output, GridPoint gp, int W, int H) {
-        // Check grid bounds
-        if (gp.getX() < 0 || gp.getX() > W || gp.getY() < 0 || gp.getY() > H) return false;
-        // Check uniqueness constraint
-        for (GridPoint placedGp : temp_output) {
-            if (gp.equals(placedGp)) return false;
-        }
-        return true;
-    }
-    
-    private Direction getNextDirection(Direction currentDirection) {
-        switch (currentDirection) {
-            case UP: return Direction.RIGHT;
-            case RIGHT: return Direction.DOWN;
-            case DOWN: return Direction.LEFT;
-            case LEFT: return Direction.UP;
-            default: return Direction.RIGHT; // or handle error
-        }
-    }
 
     @Override
     public Output doAlgorithm(Input input) {
+        int START_X = 0;
+        int START_Y = 0;
+
         // creating an output
         Output output = new Output(input);
-        int W = input.width - 1;
-        int H = input.height - 1;
 
         // Start with (0,0)
-        GridPoint gp = new GridPoint(input.width/2, input.height/2);
+        GridPoint gp = new GridPoint(START_X, START_Y);
         output.embedding.add(gp);
-        Direction currentDirection = Direction.RIGHT;
         
         // Make temporary list to store the directions
         List<GridPoint> gp_temp = new ArrayList<>();

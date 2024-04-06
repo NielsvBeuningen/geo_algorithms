@@ -20,8 +20,9 @@ import java.util.stream.IntStream;
 import contest_2ima20.client.boundaryembedding.BoundaryEmbeddingAlgorithm;
 import contest_2ima20.core.boundaryembedding.Direction;
 import contest_2ima20.core.boundaryembedding.GridPoint;
-import contest_2ima20.client.algorithms.utils.GridFunctions;
+
 // Custom import
+import contest_2ima20.client.algorithms.utils.GridFunctions;
 import contest_2ima20.client.algorithms.utils.Problems;
 
 /**
