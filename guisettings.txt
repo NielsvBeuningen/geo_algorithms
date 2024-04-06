@@ -1,13 +1,7 @@
 #
-<<<<<<< HEAD
-#Thu Mar 14 10:40:18 CET 2024
-autoExportSolutions=false
-problemPath=C\:\\Users\\20203541\\Documents\\Studie\\2IMA20\\Project\\geo_algorithms\\problems
-=======
-#Mon Apr 01 10:20:25 CEST 2024
+#Wed Apr 03 14:42:04 CEST 2024
+=\=\=\=\=\=\=
 teamName=Group13Autobots
 connectionString=https\://catvis.win.tue.nl/2img15/submit/
 autoExportSolutions=false
-problemPath=C\:\\Users\\Beheerder\\Documents\\Prive\\University\\Msc\\Year2\\Q3\\Algorithms for Geovisualization\\assignments\\geo_algorithms\\problems
-sharedSecret=Werollout
->>>>>>> niels-priemv2
+problemPath=C\:\\Users\\20182667\\Documents\\Studie\\Vakken\\Master\\Geo Visualization\\geo_algorithms\\problems
