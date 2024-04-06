@@ -16,6 +16,7 @@ public class AlgorithmList {
     public static BoundaryEmbeddingAlgorithm[] getAlgorithms() {
         return new BoundaryEmbeddingAlgorithm[]{
             new DisplayAlgorithm(),
+            new Info(),
             new BumbleBeter(),
             new OptimusPriem(),
             new BasicSpiralAlgorithm(),
